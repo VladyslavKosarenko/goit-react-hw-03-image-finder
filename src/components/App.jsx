@@ -1,5 +1,5 @@
-import axios from 'axios';
 import React, { Component } from 'react';
+import axios from 'axios';
 import { Button } from './Button'; 
 import { Modal } from './Modal'; 
 import { Searchbar } from './Searchbar'; 
@@ -14,7 +14,6 @@ const StyledApp = styled.div`
   grid-gap: 16px;
   padding-bottom: 24px;
 `;
-
 
 export class App extends Component {
   state = {
@@ -46,7 +45,6 @@ export class App extends Component {
       this.fetchImages();
     }
   }
-  
 
   fetchImages = async () => {
     const { query, currentPage } = this.state;
@@ -79,22 +77,26 @@ export class App extends Component {
     this.setState((prevState) => ({ currentPage: prevState.currentPage + 1 }));
   };
 
-
-  openModal = (image) => {
-    this.setState({ selectedImage: image });
+openModal = (image) => {
+  if (!this.state.isModalOpen) {
+    this.setState({ selectedImage: image, isModalOpen: true });
     document.addEventListener('keydown', this.handleKeyDown);
-  };
+  }
+};
 
-  closeModal = () => {
-    this.setState({ selectedImage: null });
+closeModal = () => {
+  if (this.state.isModalOpen) {
+    this.setState({ selectedImage: null, isModalOpen: false });
     document.removeEventListener('keydown', this.handleKeyDown);
-  };
+  }
+};
 
- handleKeyDown = (e) => {
+  handleKeyDown = (e) => {
     if (e.key === 'Escape') {
       this.closeModal();
     }
   };
+
   render() {
     const { images, isLoading, selectedImage } = this.state;
 
@@ -102,13 +104,18 @@ export class App extends Component {
       <StyledApp className="App">
         <Searchbar onSubmit={this.handleSearch} />
         <ImageGallery images={images} onImageClick={this.openModal}>
-  {images.map((image) => (
-    <ImageGalleryItem key={image.id} src={image.webformatURL} alt={image.tags} />
-  ))}
-</ImageGallery>
+          {images.map((image) => (
+            <ImageGalleryItem key={image.id} id={image.id} src={image.webformatURL} alt={image.tags} onClick={() => this.openModal(image)} />
+          ))}
+        </ImageGallery>
         {isLoading && <Bars type="Oval" color="#00BFFF" height={100} width={100} timeout={3000} />}
         {images.length > 0 && !isLoading && <Button onLoadMore={this.loadMore} show={true} />}
-        {selectedImage && <Modal image={selectedImage} onClose={this.closeModal} />}
+        {selectedImage && (
+          <Modal
+            image={selectedImage.largeImageURL}
+            onClose={this.closeModal}
+          />
+        )}
       </StyledApp>
     );
   }

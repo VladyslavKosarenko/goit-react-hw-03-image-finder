@@ -13,9 +13,12 @@ const Image = styled.img`
   transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-export const ImageGalleryItem = ({ src, alt }) => {
+export const ImageGalleryItem = ({ id, src, alt, onClick }) => {
   return (
-    <StyledImageGalleryItem className="gallery-item">
+    <StyledImageGalleryItem
+      className="gallery-item"
+      onClick={() => onClick({ id, src, alt })}
+    >
       <Image src={src} alt={alt} />
     </StyledImageGalleryItem>
   );
