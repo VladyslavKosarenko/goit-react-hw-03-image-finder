@@ -22,6 +22,7 @@ export class App extends Component {
     currentPage: 1,
     isLoading: false,
     selectedImage: null,
+    totalHits: null,
   };
 
   async componentDidMount() {
@@ -58,8 +59,10 @@ export class App extends Component {
       });
 
       const newImages = response.data.hits;
+      const totalMaxHits = response.data.totalHits
       this.setState((prevState) => ({
         images: [...prevState.images, ...newImages],
+        totalHits: totalMaxHits,
       }));
       return newImages; 
     } catch (error) {
@@ -109,7 +112,7 @@ closeModal = () => {
           ))}
         </ImageGallery>
         {isLoading && <Bars type="Oval" color="#00BFFF" height={100} width={100} timeout={3000} />}
-        {images.length > 0 && !isLoading && <Button onLoadMore={this.loadMore} show={true} />}
+        {images.length > 0 && !isLoading && this.state.totalHits > images.length && <Button onLoadMore={this.loadMore} show={true} />}
         {selectedImage && (
           <Modal
             image={selectedImage.largeImageURL}
